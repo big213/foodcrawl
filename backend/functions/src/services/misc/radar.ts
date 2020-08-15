@@ -28,41 +28,41 @@ export class Radar {
     return data.places;
   }
 
-  static async getRandomNearbyNewPlace(req, categories: Array<string>) {
-    if(!req.user) {
-      throw errorHelper.loginRequiredError();
-    }
-
-    if(!categories.length) {
+  static async getRandomNearbyNewPlace(userId: Number, categories: Array<string>) {
+    if(!categories.length || !userId) {
       throw errorHelper.missingParamsError();
     }
 
     //get the radar_id
     const userResult = await mysqlHelper.executeDBQuery("SELECT radar_id FROM user WHERE id = :id", {
-      id: req.user.id
+      id: userId
     });
 
     //get the user data from radar
     const radarResult = await radarApi.get("/users/" + userResult[0].radar_id);
 
-    const { data } = await radarApi.get("/search/places?categories=" + categories.join(",") + "&near=" + radarResult.data.user.location.coordinates[1] + "," + radarResult.data.user.location.coordinates[0]);
+    const { data: { places: nearbyPlaces } } = await radarApi.get("/search/places?categories=" + categories.join(",") + "&near=" + radarResult.data.user.location.coordinates[1] + "," + radarResult.data.user.location.coordinates[0]);
 
-    if(!data.places[0]) {
+    if(!nearbyPlaces[0]) {
       throw errorHelper.generateError("No places nearby");
     }
 
-    //check 
-    /*
-    const placeVisitedResult = await mysqlHelper.executeDBQuery("SELECT count(*) FROM userVisitedLocations WHERE location IN(:location) AND user = :user", {
-      location: 
-      user: req.user.id
-    })
-    */
+    //get ids of places the user has visited
+    const placeVisitedResult = await mysqlHelper.executeDBQuery("SELECT location FROM userVisitedLocations WHERE user = :user", {
+      user: userId
+    });
 
-    //Todo: nearbyNewPlaces contains only places not in userVisitedLocations
-    const nearbyNewPlaces = data.places;
+    const placeVisitedIds = placeVisitedResult.map(item => item.location);
 
-    return nearbyNewPlaces[Math.floor(Math.random()*nearbyNewPlaces.length)];
+    //only add to this array if not visited before
+    const newNearbyPlaces = nearbyPlaces.reduce((total, item) => {
+      if(!placeVisitedIds.includes(item._id)) {
+        total.push(item)
+      }
+      return total;
+    }, []);
+
+    return newNearbyPlaces[Math.floor(Math.random()*newNearbyPlaces.length)];
   }
 
   static async getPlace(placeId) {
