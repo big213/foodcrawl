@@ -10,13 +10,24 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 
 import io.radar.sdk.Radar;
+import io.radar.sdk.RadarTrackingOptions;
 import io.radar.sdk.model.RadarEvent;
 import io.radar.sdk.model.RadarUser;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,12 +59,61 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Radar.startTracking(RadarTrackingOptions.EFFICIENT);
+
+        post();
+
+
     }
 
+    public void post() {
+        OkHttpClient client = new OkHttpClient();
+
+        String postBody = "{\n" +
+                "    \"action\": \"getCurrentUser\",\n" +
+                "    \"query\": {\n" +
+                "        \"id\": null,\n" +
+                "        \"name\": null,\n" +
+                "        \"randomNearbyNewPlace\": null\n" +
+                "    }\n" +
+                "}";
+
+        Request request = new Request.Builder()
+                .url("https://us-central1-foodcrawl-c0abe.cloudfunctions.net/api/jql")
+                .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), postBody))
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+
+                    try {
+                        JSONObject jObject = new JSONObject(response.body().string());
+                        Log.i("TAG", "onResponse: " +jObject.getString("message"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
 
     public void showMapActivity(View view) {
         Intent mapIntent = new Intent(this, MapActivity.class);
         if (currentLocation!=null)
             startActivity(mapIntent);
     }
+
+    public void showRestaurantsClicked(View view) {
+        Intent resIntent = new Intent(this, ListActivity.class);
+        startActivity(resIntent);
+    }
+
+
 }
