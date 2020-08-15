@@ -28,7 +28,7 @@ export class Radar {
     return data.places;
   }
 
-  static async getRandomNearbyNewPlace(userId: Number, categories: Array<string>) {
+  static async getRandomNearbyNewPlace(userId: Number, categories: Array<string>, quantity = 1) {
     if(!categories.length || !userId) {
       throw errorHelper.missingParamsError();
     }
@@ -62,7 +62,18 @@ export class Radar {
       return total;
     }, []);
 
-    return newNearbyPlaces[Math.floor(Math.random()*newNearbyPlaces.length)];
+    //pick some
+    if(newNearbyPlaces.length <= quantity) {
+      throw errorHelper.generateError("Not enough places nearby");
+    }
+
+    const selectedNewNearbyPlaces = new Set();
+
+    while(selectedNewNearbyPlaces.size < quantity) {
+      selectedNewNearbyPlaces.add(newNearbyPlaces[Math.floor(Math.random()*newNearbyPlaces.length)])
+    }
+    
+    return [...selectedNewNearbyPlaces];
   }
 
   static async getPlace(placeId) {

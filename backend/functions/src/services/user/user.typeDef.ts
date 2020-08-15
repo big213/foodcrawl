@@ -30,9 +30,9 @@ export default {
       }, query);
     }
   },
-  randomNearbyNewPlace: {
+  randomNearbyNewPlaces: {
     resolver: async (context, req, currentObject, query, args, parent) => {
-      return Radar.getRandomNearbyNewPlace(currentObject.id, ["food-beverage"]);
+      return Radar.getRandomNearbyNewPlace(currentObject.id, ["food-beverage"], 10);
     }
   }
 }
