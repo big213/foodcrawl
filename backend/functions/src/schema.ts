@@ -10,13 +10,13 @@ params: {
 
 export const rootResolvers = {
   query: {
-    getMyUsers: {
+    getCurrentUser: {
       method: "get",
-      route: "/myUsers",
-      resolver: (req) => User.paginator.getRecord(req, {
+      route: "/currentUser",
+      resolver: (req) => User.getRecord(req, {
         ...req.params,
         ...req.jql?.__args,
-        created_by: req.user.id,
+        id: req.user.id,
       }, req.jql)
     },
   },

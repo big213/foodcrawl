@@ -32,7 +32,7 @@ export default {
   },
   randomNearbyNewPlace: {
     resolver: async (context, req, currentObject, query, args, parent) => {
-      return Radar.getRandomNearbyNewPlace(req, ["food-beverage"]);
+      return Radar.getRandomNearbyNewPlace(currentObject.id, ["food-beverage"]);
     }
   }
 }
