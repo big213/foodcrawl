@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "jql-boilerplate",
+    "prod": "foodcrawl-c0abe"
+  }
+}
