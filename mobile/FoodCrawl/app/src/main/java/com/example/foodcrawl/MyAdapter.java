@@ -50,6 +50,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             holder.open.setText("Closed");
             holder.open.setTextColor(Color.parseColor("#F44336"));
         }
+
+        if (restaurantList.get(position).visited) {
+            holder.check.setVisibility(View.VISIBLE);
+            holder.visited.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -63,6 +68,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         TextView rating, open;
         ImageView image;
         OnRestaurantListener onRestaurantListener;
+        TextView visited;
+        ImageView check;
 
         public MyViewHolder(@NonNull View itemView, OnRestaurantListener onRestaurantListener) {
             super(itemView);
@@ -71,6 +78,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             rating = itemView.findViewById(R.id.rating);
             open = itemView.findViewById(R.id.Open_now);
             image = itemView.findViewById(R.id.imageView);
+            visited = itemView.findViewById(R.id.visitedTextview);
+            check = itemView.findViewById(R.id.checkmark);
             itemView.setOnClickListener(this);
             this.onRestaurantListener = onRestaurantListener;
         }

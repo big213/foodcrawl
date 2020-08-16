@@ -9,6 +9,7 @@ public class Restaurant implements Serializable {
     public String description;
     public double coordinate[] =new double[2];
     public boolean open;
+    public boolean visited;
     public double rating;
 
     int image;
@@ -21,7 +22,10 @@ public class Restaurant implements Serializable {
         this.address = address;
         this.description = description;
         int int_random = ThreadLocalRandom.current().nextInt() % 6;
-        image = image_id[(int_random + 6)% 6];
+        int id = (int_random + 6)% 6;
+        image = image_id[id];
+        if (id == 1) visited = true;
+        else visited = false;
     }
 
     public void setCoordinate(double x, double y) {
