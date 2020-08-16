@@ -63,7 +63,7 @@ public class DetailsActivity extends AppCompatActivity  implements OnMapReadyCal
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(restaurant.title);
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
         googleMap.addMarker(markerOptions);
     }
 
