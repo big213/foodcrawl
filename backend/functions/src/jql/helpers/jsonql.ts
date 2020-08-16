@@ -43,7 +43,10 @@ export default class {
                 throw new Error("Invalid query");
               }
             } else {
-              validatedResolvedQuery[field] = validQuery[field];
+              validatedResolvedQuery[field] = {
+                resolver: validQuery[field].resolver,
+                externalQuery: externalQuery[field]
+              };
             }
           }
         } else if(validQuery[field].dataloader) {

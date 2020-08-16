@@ -10,6 +10,8 @@ import * as jql from "./jql";
 import * as schema from "./schema";
 import { handleWebhook, handlePusherAuth } from "./helpers/tier3/subscription";
 
+import { handleRadarWebhook } from "./helpers/tier3/radar";
+
 mysql.initialize();
 
 const app = express();
@@ -28,5 +30,7 @@ jql.process(app, schema);
 app.post('/pusher/auth', handlePusherAuth);
 
 app.post('/pusher/webhook', handleWebhook);
+
+app.post('/radar/webhook', handleRadarWebhook);
 
 export const api = functions.https.onRequest(app);
