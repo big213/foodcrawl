@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,12 +34,12 @@ public class DetailsActivity extends AppCompatActivity  implements OnMapReadyCal
         restaurant = (Restaurant)i.getSerializableExtra("Restaurant");
         Log.i("TAG", "onCreate: " + restaurant.title);
         TextView title = findViewById(R.id.restTitle);
-        TextView rating = findViewById(R.id.restRating);
+        RatingBar rating = findViewById(R.id.detailsRatingBar);
         TextView address = findViewById(R.id.restAddress);
         TextView status = findViewById(R.id.statusText);
 
         title.setText(restaurant.title);
-        rating.setText(String.valueOf(restaurant.rating));
+        rating.setRating((float)(restaurant.rating));
         address.setText(restaurant.address);
         if (restaurant.open) {
             status.setText("Open");

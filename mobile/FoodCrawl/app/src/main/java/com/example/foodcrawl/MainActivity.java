@@ -9,9 +9,9 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-
-
-
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.ImageView;
 
 
 import org.jetbrains.annotations.NotNull;
@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     public static Location customLocation;
     public static JSONObject jObject;
     public static List<Restaurant> restaurantList;
+    public boolean animationFinished = false;
+    public boolean dataLoaded = false;
 
 
     public String apikey = "AIzaSyCLkTDuQtBR-rs-layuF1QMsHExMUAOvLI";
@@ -76,8 +78,28 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Radar.startTracking(RadarTrackingOptions.EFFICIENT);
-
         post();
+
+        ImageView appIconImage = findViewById(R.id.appLogoImage);
+        Animation animation = new AlphaAnimation(0, 1);
+        animation.setDuration(3000);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                animationFinished = true;
+                Intent intent = new Intent(getApplicationContext(), DrawerActivity.class);
+                if (dataLoaded) {
+                    startActivity(intent);
+                    finish();
+                }
+
+            }
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+        appIconImage.startAnimation(animation);
 
     }
 
@@ -176,6 +198,12 @@ public class MainActivity extends AppCompatActivity {
                             getDetails(name, restaurant.coordinate[0], restaurant.coordinate[1]);
 
                         }
+                        dataLoaded = true;
+                        if (animationFinished == true) {
+                            Intent i = new Intent(getApplicationContext(), DrawerActivity.class);
+                            startActivity(i);
+                            finish();
+                        }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -185,16 +213,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void showMapActivity(View view) {
-        Intent mapIntent = new Intent(this, MapActivity.class);
-        if (currentLocation!=null)
-            startActivity(mapIntent);
-    }
 
-    public void showRestaurantsClicked(View view) {
-        Intent resIntent = new Intent(this, ListActivity.class);
-        startActivity(resIntent);
-    }
 
 
 }

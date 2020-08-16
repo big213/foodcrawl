@@ -1,14 +1,19 @@
 package com.example.foodcrawl;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ListActivity extends AppCompatActivity implements MyAdapter.OnRestaurantListener {
     RecyclerView recyclerView;
@@ -18,18 +23,35 @@ public class ListActivity extends AppCompatActivity implements MyAdapter.OnResta
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
-//        restaurantList = new ArrayList<>();
-//        restaurantList.add(new Restaurant("Alphonzo Foods", "Brooklyn, NY", "Wine bar from James Murphy of LCD Soundsystem serving small plates in snug digs with light woodwork."));
-//        restaurantList.add(new Restaurant("New York Italian", "Brooklyn, NY", "We Can Provide a Delicious Italian Meal for You. Call Fabio Cucina Italiana Now. Come Have a Great Meal Cooked by a Professional Chef. Visit in New York. "));
-//        restaurantList.add(new Restaurant("Norma", "Brooklyn, NY", "Norma is genuine food based on updated classic recipes, not alchemy, and the importance of using only the finest ingredients."));
-//        restaurantList.add(new Restaurant("Call Me Pasta!", " Pearl St, New York", "Intimate eatery serving brick oven pizzas & homemade Italian pastas such as gnocchi & linguini."));
-
-
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setFocusable(false);
         MyAdapter myAdapter = new MyAdapter(this, restaurantList, this);
         recyclerView.setAdapter(myAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+        TextView recommendedTitle = findViewById(R.id.recommendedRestaurant);
+        TextView recommendedAddress = findViewById(R.id.recommendedRestaurantAddress);
+        TextView statusText = findViewById(R.id.statusTextView);
+        RatingBar ratingBar = findViewById(R.id.ratingBar);
+        Random random = new Random();
+        int n = restaurantList.size();
+        final Restaurant rec_restaurant = restaurantList.get((random.nextInt() % n + n) % n);
+        recommendedTitle.setText(rec_restaurant.title);
+        recommendedAddress.setText(rec_restaurant.address);
+        ratingBar.setRating((float) rec_restaurant.rating);
+        if (rec_restaurant.open) statusText.setText("Open");
+        else statusText.setText("Closed");
+
+        CardView recCard = findViewById(R.id.reccard);
+        recCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), DetailsActivity.class);
+                intent.putExtra("Restaurant", rec_restaurant);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override

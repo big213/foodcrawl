@@ -64,6 +64,17 @@
             app:layout_constraintStart_toEndOf="@+id/imageView2"
             app:layout_constraintTop_toTopOf="@+id/imageView2" />
 
+        <RatingBar
+            android:id="@+id/detailsRatingBar"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:theme="@style/RatingBar"
+            app:layout_constraintBottom_toBottomOf="@+id/statusText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/statusText" />
+
         <TextView
             android:id="@+id/restAddress"
             android:layout_width="wrap_content"
@@ -77,22 +88,14 @@
             app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
         <TextView
-            android:id="@+id/restRating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="4.6"
-            app:layout_constraintStart_toStartOf="@+id/restAddress"
-            app:layout_constraintTop_toBottomOf="@+id/restAddress" />
-
-        <TextView
             android:id="@+id/statusText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
             android:text="Open"
-            app:layout_constraintStart_toStartOf="@+id/restRating"
-            app:layout_constraintTop_toBottomOf="@+id/restRating" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/restAddress"
+            app:layout_constraintTop_toBottomOf="@+id/restAddress" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
