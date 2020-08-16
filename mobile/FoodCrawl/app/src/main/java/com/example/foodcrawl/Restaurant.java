@@ -1,12 +1,16 @@
 package com.example.foodcrawl;
 
+import java.io.Serializable;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Restaurant {
-    String title;
-    String address;
-    String description;
-    double coordinate[] =new double[2];
+public class Restaurant implements Serializable {
+    public String title;
+    public String address;
+    public String description;
+    public double coordinate[] =new double[2];
+    public boolean open;
+    public double rating;
+
     int image;
 
     public static int image_id[] = {R.drawable.img1, R.drawable.img2, R.drawable.img3, R.drawable.img4, R.drawable.img5, R.drawable.img6};

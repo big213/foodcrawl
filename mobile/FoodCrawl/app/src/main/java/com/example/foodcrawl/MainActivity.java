@@ -10,6 +10,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+
+
+
+
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,6 +21,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import io.radar.sdk.Radar;
@@ -40,11 +46,15 @@ public class MainActivity extends AppCompatActivity {
     public static JSONObject jObject;
     public static List<Restaurant> restaurantList;
 
+
+    public String apikey = "AIzaSyCLkTDuQtBR-rs-layuF1QMsHExMUAOvLI";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         restaurantList = new ArrayList<>();
+
+
 
         int requestCode = 0;
         ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION }, requestCode);
@@ -69,7 +79,53 @@ public class MainActivity extends AppCompatActivity {
 
         post();
 
+    }
 
+    public Restaurant getDetails(String name, final double x, final double y) {
+        name = name.trim();
+        name  = name.replaceAll("\\s", "%20");
+
+
+        final OkHttpClient client = new OkHttpClient();
+        String url = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?"+
+                "input="+ name + "&inputtype=textquery"+
+                "&fields=photos,formatted_address,name,opening_hours,rating"+
+                "&locationbias=circle:2000@"+x+","+y+
+                "&key=AIzaSyCLkTDuQtBR-rs-layuF1QMsHExMUAOvLI";
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String myResponse = response.body().string();
+                    //Log.i("TAG", "onResponse: " + myResponse);
+                    try {
+                        JSONObject reqObj = new JSONObject(myResponse);
+                        JSONArray canditates = reqObj.getJSONArray("candidates");
+                        JSONObject item = canditates.getJSONObject(0);
+                        Log.i("TAG", "onResponse: " + item.getString("name") + " " + item.getDouble("rating"));
+                        Restaurant restaurant = new Restaurant(item.getString("name"), item.getString("formatted_address"), "N/A");
+                        restaurant.rating = item.getDouble("rating");
+                        JSONObject openingHours = item.getJSONObject("opening_hours");
+                        Log.i("TAG", "onResponse: "+openingHours.getBoolean("open_now"));
+                        restaurant.coordinate[0] = x;
+                        restaurant.coordinate[1] = y;
+                        restaurant.open = openingHours.getBoolean("open_now");
+                        restaurantList.add(restaurant);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        return null;
     }
 
     public void post() {
@@ -117,7 +173,8 @@ public class MainActivity extends AppCompatActivity {
                             Restaurant restaurant = new Restaurant(name, "N/A", "N/A");
                             restaurant.setCoordinate((double)coordinate.get(0), (double)coordinate.get(1));
 
-                            restaurantList.add(restaurant);
+                            getDetails(name, restaurant.coordinate[0], restaurant.coordinate[1]);
+
                         }
 
                     } catch (JSONException e) {

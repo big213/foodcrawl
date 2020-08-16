@@ -4,12 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity implements MyAdapter.OnRestaurantListener {
     RecyclerView recyclerView;
     List<Restaurant> restaurantList = MainActivity.restaurantList;
 
@@ -26,8 +27,16 @@ public class ListActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setFocusable(false);
-        MyAdapter myAdapter = new MyAdapter(this, restaurantList);
+        MyAdapter myAdapter = new MyAdapter(this, restaurantList, this);
         recyclerView.setAdapter(myAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    @Override
+    public void onRestaurantClick(int position) {
+        Restaurant mRes = restaurantList.get(position);
+        Intent intent = new Intent(this, DetailsActivity.class);
+        intent.putExtra("Restaurant", mRes);
+        startActivity(intent);
     }
 }
