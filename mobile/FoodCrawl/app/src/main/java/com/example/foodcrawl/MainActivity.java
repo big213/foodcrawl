@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         customLocation.setLongitude(91.83158386561064d);
         Radar.initialize(this, publishableKey);
 
-        Radar.trackOnce(customLocation, new RadarCallback() {
+        Radar.trackOnce( new RadarCallback() {
 
             @Override
             public void onComplete(Radar.RadarStatus status, Location location, RadarEvent[] events, RadarUser user) {
